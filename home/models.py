@@ -4,6 +4,7 @@ from django.db import models
 class GenderType(models.TextChoices):
     MALE = 'MALE'
     FEMALE = 'FEMALE'
+
 # Create your models here.
 class User(models.Model):
     fullname = models.CharField(max_length=30)
