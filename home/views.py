@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from rest_framework import status
 from .models import User
 from .serializers import userSerializer
+from django.core.mail import send_mail
 import re
 
 
@@ -17,6 +18,7 @@ class Signup(APIView):
             phone_no = request.data.get('phone_no')
             gender = request.data.get('gender')
             hostel=request.data.get('hostel')
+
 
             student_no_pattern = r"^\d{6,9}$"
             if not re.match(student_no_pattern, student_no):
@@ -37,6 +39,7 @@ class Signup(APIView):
                     {"msg": "Invalid phone number. Must be 10 digits or start with +91 followed by 10 digits."},
                     status=status.HTTP_400_BAD_REQUEST
                 )
+            
 
             if User.objects.filter(student_no=student_no).exists():
                 return JsonResponse(
@@ -63,6 +66,11 @@ class Signup(APIView):
             serializer = userSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
+
+                subject = "Welcome to Our Platform!"
+                message = f"Hi {fullname},\n\nThank you for registering on our platform. We're excited to have you on board!"
+                send_mail(subject, message,' sugandhibansal26@gmail.com', [email])
+
                 return JsonResponse(
                     {"msg": "Registered successfully"},
                     status=status.HTTP_201_CREATED
@@ -72,6 +80,27 @@ class Signup(APIView):
                     {"msg": "Validation errors", "errors": serializer.errors},
                     status=status.HTTP_400_BAD_REQUEST
                 )
+        except Exception as e:
+            return JsonResponse(
+                {"error": "An error occurred", "details": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+         
+
+
+
+
+class members(APIView):
+
+    def get(self,request):
+        try:
+            users = User.objects.all()
+            serializer = userSerializer(users, many=True)
+            return JsonResponse(
+                {"members": serializer.data},
+                status=status.HTTP_200_OK,
+                safe=False
+            )
         except Exception as e:
             return JsonResponse(
                 {"error": "An error occurred", "details": str(e)},
