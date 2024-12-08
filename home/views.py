@@ -220,3 +220,36 @@ class studentsAttended(APIView):
                 {"error": "An error occurred", "details": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+        
+class ManualAttendance(APIView): 
+    def post(self, request):
+        try:
+            student_no = request.data.get('student_no')
+
+            if not student_no:
+                return JsonResponse(
+                    {"msg": "Student number is required."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            try:
+                user = User.objects.get(student_no=student_no)
+            except User.DoesNotExist:
+                return JsonResponse(
+                    {"msg": "Student not found with the given student number."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            # Mark the student as present
+            user.attendance = True
+            user.save()
+
+            return JsonResponse(
+                {"msg": f"Attendance marked as present for student {student_no}."},
+                status=status.HTTP_200_OK
+            )
+
+        except Exception as e:
+            return JsonResponse(
+                {"error": "An error occurred", "details": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
