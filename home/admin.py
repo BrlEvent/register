@@ -6,3 +6,5 @@ from .models import User
 class UserAdmin(ImportExportModelAdmin):
     pass
     list_display = ('fullname', 'student_no', 'email' , 'branch', 'phone_no', 'gender', 'hostel', 'attendance')
+    search_fields = ('fullname', 'student_no', 'email', 'branch',  'gender')
+    list_filter = ('gender', 'attendance')
