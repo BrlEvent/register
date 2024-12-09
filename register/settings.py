@@ -18,8 +18,8 @@ SECRET_KEY =os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+ALLOWED_HOSTS = ['https://brl_registration_12.sugandhi.tech', '13.127.203.153', 'localhost']
 
-ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -36,6 +36,11 @@ INSTALLED_APPS = [
     'corsheaders',
     'import_export',
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://brl_registration_12.sugandhi.tech'
+]
+
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_HEADERS = [
