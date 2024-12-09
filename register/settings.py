@@ -10,6 +10,14 @@ dotenv.load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+STATIC_URL = '/static/'
+
+# Directory where all static files will be collected
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -136,7 +144,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
