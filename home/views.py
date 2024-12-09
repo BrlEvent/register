@@ -89,7 +89,7 @@ class Signup(APIView):
                  
                 serializer.save()
                 
-                qr_data = f"Name: {fullname}\nStudent No: {student_no}\nEmail: {email}"
+                qr_data = f"Student No: {student_no}"
                 qr_code = pyqrcode.create(qr_data)
 
                 qr_image = BytesIO()
