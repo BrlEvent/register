@@ -18,7 +18,7 @@ SECRET_KEY =os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ['https://brl_registration_12.sugandhi.tech', '13.127.203.153', 'localhost']
+ALLOWED_HOSTS = ['https://brl_registration_12.sugandhi.tech', '13.127.203.153', 'localhost','127.0.0.1']
 
 
 
