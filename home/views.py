@@ -134,7 +134,7 @@ class Signup(APIView):
 
                 html_content = render_to_string('mail.html', context)
 
-                subject = "Welcome to Our Platform!"
+                subject = "Registered Successfully"
                 email_msg = EmailMessage(
                     subject=subject,
                     body=html_content,
