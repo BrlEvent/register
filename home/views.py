@@ -25,10 +25,10 @@ class Signup(APIView):
             phone_no = request.data.get('phone_no')
             gender = request.data.get('gender')
             hostel=request.data.get('hostel')
-            #recaptcha_token = request.data.get('recaptcha_token')
+            recaptcha_token = request.data.get('recaptcha_token')
 
             # Validate reCAPTCHA
-            '''recaptcha_response = requests.post(
+            recaptcha_response = requests.post(
                 "https://www.google.com/recaptcha/api/siteverify",
                 data={
                     "secret": settings.RECAPTCHA_SECRET_KEY,
@@ -40,7 +40,7 @@ class Signup(APIView):
                 return JsonResponse(
                     {"msg": "Invalid reCAPTCHA. Please try again."},
                     status=status.HTTP_400_BAD_REQUEST
-                )'''
+                )
 
 
             student_no_pattern = r"^2\d{5,8}$"
