@@ -8,9 +8,11 @@ import pyqrcode
 from io import BytesIO
 from django.core.mail import EmailMessage
 import pyzbar.pyzbar as pyzbar
-from PIL import Image
 import requests
 from django.conf import settings
+from PIL import Image
+from django.template.loader import render_to_string
+from email.mime.image import MIMEImage
 
 class Signup(APIView):
 
@@ -23,10 +25,10 @@ class Signup(APIView):
             phone_no = request.data.get('phone_no')
             gender = request.data.get('gender')
             hostel=request.data.get('hostel')
-            recaptcha_token = request.data.get('recaptcha_token')
+            #recaptcha_token = request.data.get('recaptcha_token')
 
             # Validate reCAPTCHA
-            recaptcha_response = requests.post(
+            '''recaptcha_response = requests.post(
                 "https://www.google.com/recaptcha/api/siteverify",
                 data={
                     "secret": settings.RECAPTCHA_SECRET_KEY,
@@ -38,7 +40,7 @@ class Signup(APIView):
                 return JsonResponse(
                     {"msg": "Invalid reCAPTCHA. Please try again."},
                     status=status.HTTP_400_BAD_REQUEST
-                )
+                )'''
 
 
             student_no_pattern = r"^2\d{5,8}$"
@@ -97,15 +99,53 @@ class Signup(APIView):
                 qr_image.seek(0)
 
                 # Send Email with QR Code
+                context = {
+                    'fullname': fullname,
+                    'student_no': student_no,
+                    'email': email,
+                    'event_name': 'Seminar on Blockchain',
+                    'event_date': '12 December 2024',
+                    'event_time': '8:30 am to 11:00 am',
+                    'location': 'CSIT Auditorium',
+                }
+                image_paths = [
+                    {'path': 'templates/images/image-1.png', 'cid': 'img001'},
+                    {'path': 'templates/images/image-2.png', 'cid': 'img002'},
+                    {'path': 'templates/images/image-4.png', 'cid': 'img004'},
+                    {'path': 'templates/images/image-5.png', 'cid': 'img005'},
+                    {'path': 'templates/images/image-6.png', 'cid': 'img006'}
+                ]
+                qr_img = MIMEImage(qr_image.getvalue(), _subtype="png")
+                qr_img.add_header('Content-ID', '<qr_code>')  
+
+                
+                images = []
+
+
+                for image in image_paths:
+                    with open(image['path'], 'rb') as img_file:
+                        img_data = img_file.read()
+                        img = MIMEImage(img_data)
+                        img.add_header('Content-ID', f"<{image['cid']}>")
+                        images.append(img) 
+                img.add_header('Content-ID', '<qr_code>')
+                images.append(qr_img)
+
+
+                html_content = render_to_string('mail.html', context)
+
                 subject = "Welcome to Our Platform!"
-                message = f"Hi {fullname},\n\nThank you for registering on our platform. We're excited to have you on board!"
                 email_msg = EmailMessage(
-                    subject,
-                    message,
-                    from_email='your_email@example.com',  # Use settings.DEFAULT_FROM_EMAIL in production
+                    subject=subject,
+                    body=html_content,
+                    from_email='brl@example.com', 
                     to=[email]
                 )
-                email_msg.attach(f"{student_no}_qr.png", qr_image.getvalue(), 'image/png')
+                email_msg.content_subtype = 'html'
+
+                # email_msg.attach(img)
+                for img in images:
+                    email_msg.attach(img)
                 email_msg.send()
 
                 return JsonResponse(
