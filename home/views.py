@@ -27,7 +27,6 @@ class TokenAuthentication(BaseAuthentication):
         if token != settings.SECRET_API_TOKEN:
             raise AuthenticationFailed("Invalid token.")
 
-        # No user association here, returning None.
         return (None, None)
 
 
