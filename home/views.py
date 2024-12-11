@@ -277,6 +277,7 @@ class studentsAttended(APIView):
             )
         
 class ManualAttendance(APIView): 
+    authentication_classes = [TokenAuthentication]
     def post(self, request):
         try:
             student_no = request.data.get('student_no')
@@ -341,3 +342,48 @@ class DeleteUser(APIView):
                 {"error": "An error occurred", "details": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+from rest_framework.views import APIView
+from django.http import JsonResponse
+from rest_framework import status
+from .models import User
+
+class MarkAbsentView(APIView):
+    def post(self, request):
+        try:
+            student_no = request.data.get('student_no')
+
+            if not student_no:
+                return JsonResponse(
+                    {"msg": "Student number is required."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            try:
+                user = User.objects.get(student_no=student_no)
+            except User.DoesNotExist:
+                return JsonResponse(
+                    {"msg": "User with this student number does not exist."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            if not user.attendance:
+                return JsonResponse(
+                    {"msg": "User is already marked as absent."},
+                    status=status.HTTP_200_OK
+                )
+            
+            user.attendance = False
+            user.save()
+
+            return JsonResponse(
+                {"msg": f"Attendance marked as absent for student: {student_no}"},
+                status=status.HTTP_200_OK
+            )
+
+        except Exception as e:
+            return JsonResponse(
+                {"error": "An error occurred", "details": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
