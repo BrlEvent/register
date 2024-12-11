@@ -62,6 +62,7 @@ CORS_ALLOW_METHODS = [
 ]
 
 
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -74,6 +75,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'register.urls'
+
+SECRET_API_TOKEN = os.getenv('SECRET_API_TOKEN')
 
 TEMPLATES = [
     {
